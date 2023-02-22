@@ -125,7 +125,8 @@ exports.likeSauce = (req, res, next) => {
           )
             .then(() => res.status(201).json({ message: "you liked this sauce" }))
             .catch((error) => res.status(400).json({ error }));
-        } else if (likeStatus === -1) {
+        } 
+         if (likeStatus === -1) {
           Sauce.updateOne(
             { _id: req.params.id },
             { $inc: { dislikes: 1 }, $push: { usersDisliked: liker } }
@@ -134,26 +135,19 @@ exports.likeSauce = (req, res, next) => {
               res.status(201).json({ message: "you disliked this sauce" })
             )
             .catch((error) => res.status(400).json({ error }));
-        } else if (likeStatus === 0) {
+        } 
+        
+        if (likeStatus === 0) {
           if (votedSauce.usersLiked.includes(liker)) {
             Sauce.updateOne(
               { _id: req.params.id },
               { $pull: { usersLiked: liker }, $inc: { likes: -1 } }
             )
-              .then(() =>
-                res.status(201).json({ message: "you unliked this sauce" })
-              )
-              .catch((error) => res.status(400).json({ error }));
-          } else if (votedSauce.usersDisliked.includes(liker)) {
-            Sauce.updateOne(
-              { _id: req.params.id },
-              { $pull: { usersDisliked: liker }, $inc: { dislikes: -1 } }
-            )
-              .then(() =>
-                res.status(201).json({ message: "you undisliked this sauce" })
-              )
-              .catch((error) => res.status(400).json({ error }));
-          }
+              .then(() => {
+                return Sauce.updateOne({_id: req.params.id}, { $inc: {dislikes: 1 }, $pull: {usersDisliked: liker} })
+            })
+            .then(() => res.status(201).json({message: ["Like has been canceled", "dislike has been added!"] }))
+          } 
         }
     })
       .catch((error) => res.status(400).json({ error }));
