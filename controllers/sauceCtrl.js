@@ -125,7 +125,9 @@ exports.likeSauce = (req, res, next) => {
           )
             .then(() => res.status(201).json({ message: "you liked this sauce" }))
             .catch((error) => res.status(400).json({ error }));
-        } 
+        } else if (liker != liker){
+          throw new error("user not found!")
+        }
          if (likeStatus === -1) {
           Sauce.updateOne(
             { _id: req.params.id },
@@ -135,7 +137,9 @@ exports.likeSauce = (req, res, next) => {
               res.status(201).json({ message: "you disliked this sauce" })
             )
             .catch((error) => res.status(400).json({ error }));
-        } 
+        } else if (liker != liker ){
+          throw new error("user not found!")
+        }
         
         if (likeStatus === 0) {
           if (votedSauce.usersLiked.includes(liker)) {
@@ -147,7 +151,9 @@ exports.likeSauce = (req, res, next) => {
                 return Sauce.updateOne({_id: req.params.id}, { $inc: {dislikes: 1 }, $pull: {usersDisliked: liker} })
             })
             .then(() => res.status(201).json({message: ["Like has been canceled", "dislike has been added!"] }))
-          } 
+          } else if (liker != liker){
+            throw new error("user not found!")
+          }
         }
     })
       .catch((error) => res.status(400).json({ error }));
